@@ -6,22 +6,7 @@ std::vector<String> macAddresses;
 class MacAddress {
     public:
         void collect() {
-            if (Serial.available() > 0) {
-                String packetData = Serial.readStringUntil('\n');
-                Serial.println("Received raw data: " + packetData);
-                String macAddress = extractMacAddress(packetData);
-
-                if (!macAddress.isEmpty() && !macAddressExists(macAddress)) {
-                    macAddresses.push_back(macAddress);
-                    Serial.println("MAC Address added: " + macAddress);
-                } else {
-                    Serial.println("Duplicate or invalid MAC Address: " + macAddress);
-                }
-            } else {
-                Serial.println("No data available");
-            }
-
-            delay(1000);
+            //criar codiogo do snifferWifiMac
         }
 
     private:
