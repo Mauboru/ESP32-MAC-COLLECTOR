@@ -1,6 +1,8 @@
 #include <Arduino.h>
 #include <vector>
 #include "WiFi.h"
+#include "FS.h"
+#include "SPIFFS.h"
 
 std::vector<String> macAddresses;
 
@@ -37,6 +39,7 @@ private:
 
         if (!senderMac.isEmpty() && !macAddressExists(senderMac)) {
             macAddresses.push_back(senderMac);
+            Serial.flush();
             printMacTable();
         } else {
             // print caso seja duplicado ou invalido

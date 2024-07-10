@@ -2,13 +2,13 @@
 #include "Utils/WiFiManager.h"
 #include "Utils/MacAddress.h"
 
-WifiManager wificonnect;
-MacAddress macaddress;
+WifiManager wifiConnect;
+MacAddress macAddress;
 
 void setup() {
     Serial.begin(115200);
-    wificonnect.connect();
-    macaddress.collect();
+    wifiConnect.connect();
+    macAddress.collect();
 }
 
 void loop() {
