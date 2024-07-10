@@ -1,34 +1,62 @@
 #include <Arduino.h>
 #include <vector>
+#include "WiFi.h"
 
 std::vector<String> macAddresses;
 
 class MacAddress {
-    public:
-        void collect() {
-            //criar codiogo do snifferWifiMac
+public:
+    void collect() {
+        esp_wifi_set_promiscuous(true);
+        esp_wifi_set_promiscuous_rx_cb([](void* buf, wifi_promiscuous_pkt_type_t type) {
+            const wifi_promiscuous_pkt_t* packet = reinterpret_cast<wifi_promiscuous_pkt_t*>(buf);
+            extractAndProcessPacket(packet);
+        });
+    }
+
+    static void printMacTable() {
+        Serial.println("--------------------");
+        Serial.println("MAC Address Table:");
+        for (const auto& mac : macAddresses) {
+            Serial.println(mac);
+        }
+        Serial.println("--------------------");
+    }
+
+private:
+    static void extractAndProcessPacket(const wifi_promiscuous_pkt_t* packet) {
+        constexpr int mgmtHeaderSize = 36;
+
+        if (packet->rx_ctrl.sig_len < mgmtHeaderSize) {
+            return;
         }
 
-    private:
-        String extractMacAddress(const String& packetData) {
-            int start = packetData.indexOf("MAC=");
-            if (start == -1) {
-                return "";
-            }
-            start += 4;
-            int end = packetData.indexOf(",", start);
-            if (end == -1) {
-                end = packetData.length();
-            }
-            return packetData.substring(start, end);
-        }
+        const uint8_t* payload = packet->payload;
+        payload += 10;
+        String senderMac = extractMacAddress(payload);
 
-        bool macAddressExists(const String& macAddress) {
-            for (const String& addr : macAddresses) {
-                if (addr == macAddress) {
-                    return true;
-                }
-            }
-            return false;
+        if (!senderMac.isEmpty() && !macAddressExists(senderMac)) {
+            macAddresses.push_back(senderMac);
+            printMacTable();
+        } else {
+            // print caso seja duplicado ou invalido
         }
+    }
+
+    static String extractMacAddress(const uint8_t* macAddr) {
+        char macStr[18];
+        sprintf(macStr, "%02X:%02X:%02X:%02X:%02X:%02X",
+                macAddr[0], macAddr[1], macAddr[2],
+                macAddr[3], macAddr[4], macAddr[5]);
+        return String(macStr);
+    }
+
+    static bool macAddressExists(const String& macAddress) {
+        for (const String& addr : macAddresses) {
+            if (addr == macAddress) {
+                return true;
+            }
+        }
+        return false;
+    }
 };

@@ -3,13 +3,14 @@
 #include "Utils/MacAddress.h"
 
 WifiManager wificonnect;
-MacAddress macadress;
+MacAddress macaddress;
 
 void setup() {
     Serial.begin(115200);
     wificonnect.connect();
+    macaddress.collect();
 }
 
 void loop() {
-    macadress.collect();
+    //
 }

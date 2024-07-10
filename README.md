@@ -17,3 +17,8 @@ Caso queira utilizar modificar o código do projeto
 This project is used by the following companies:
 
 - TecnoMaub
+
+## Future Updates
+
+- Inserir codigo que mude o canal do wifi
+- exportar os dados para uma planilha
