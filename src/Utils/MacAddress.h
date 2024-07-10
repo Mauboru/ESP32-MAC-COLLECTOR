@@ -1,10 +1,11 @@
 #include <Arduino.h>
 #include <vector>
 #include "WiFi.h"
-#include "FS.h"
-#include "SPIFFS.h"
+#include <HTTPClient.h>
+#include <ArduinoJson.h>
 
 std::vector<String> macAddresses;
+// const char* webhook_url = "https://script.google.com/macros/s/AKfycbw02LrScNgiReoJ_I1wli4CPoODVsw9FSREWOgSUwyv7uNCLLurywRLLn2GWIHckV1L/exec";
 
 class MacAddress {
 public:
@@ -39,8 +40,8 @@ private:
 
         if (!senderMac.isEmpty() && !macAddressExists(senderMac)) {
             macAddresses.push_back(senderMac);
-            Serial.flush();
             printMacTable();
+            // sendToGoogleSheets(senderMac);
         } else {
             // print caso seja duplicado ou invalido
         }
@@ -61,5 +62,35 @@ private:
             }
         }
         return false;
+    }
+
+    static void sendToGoogleSheets(const String& macAddress) {
+        if(WiFi.status() == WL_CONNECTED) {
+            HTTPClient http;
+            http.begin(webhook_url);
+
+            http.addHeader("Content-Type", "application/json");
+
+            StaticJsonDocument<200> doc;
+            doc["macAddress"] = macAddress;
+
+            String requestBody;
+            serializeJson(doc, requestBody);
+
+            int httpResponseCode = http.POST(requestBody);
+
+            if (httpResponseCode > 0) {
+                String response = http.getString();
+                Serial.println(httpResponseCode);
+                Serial.println(response);
+            } else {
+                Serial.print("Error on sending POST: ");
+                Serial.println(httpResponseCode);
+            }
+
+            http.end();
+        } else {
+            Serial.println("Error in WiFi connection");
+        }
     }
 };

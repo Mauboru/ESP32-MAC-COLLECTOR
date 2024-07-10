@@ -27,3 +27,4 @@ This project is used by the following companies:
 ## Future Updates
 
 - Inserir codigo que mude o canal do wifi
+- Fazer com que exporte ou para planilha online
