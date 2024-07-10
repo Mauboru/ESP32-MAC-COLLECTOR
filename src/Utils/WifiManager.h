@@ -4,15 +4,14 @@
 class WifiManager {
 public:
     void connect() {
-        Serial.begin(115200);
         WiFiManager wm;
         bool res;
-        res = wm.autoConnect("AutoConnectAP", "password");
+        res = wm.autoConnect("TecnoMaub", "password");
 
         if (!res) {
-            Serial.println("Failed to connect");
+            Serial.println("Failed to connect!!");
         } else {
-            Serial.println("connected...yeey :)");
+            Serial.println("Sucessful to connect!!");
         }
     }
 };
