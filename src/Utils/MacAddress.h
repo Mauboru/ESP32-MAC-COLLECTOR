@@ -3,7 +3,7 @@
 
 std::vector<String> macAddresses;
 
-class MacAdress {
+class MacAddress {
     public:
         void collect() {
             if (Serial.available() > 0) {
@@ -24,6 +24,7 @@ class MacAdress {
             delay(1000);
         }
 
+    private:
         String extractMacAddress(const String& packetData) {
             int start = packetData.indexOf("MAC=");
             if (start == -1) {
