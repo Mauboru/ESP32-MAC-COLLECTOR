@@ -1,11 +1,13 @@
 #include <Arduino.h>
 #include <vector>
-#include "WiFi.h"
 #include <HTTPClient.h>
 #include <ArduinoJson.h>
+#include "WiFi.h"
+#include <esp_wifi.h>
+#include "Utils/WhatsApp.h"
 
 std::vector<String> macAddresses;
-// const char* webhook_url = "https://script.google.com/macros/s/AKfycbw02LrScNgiReoJ_I1wli4CPoODVsw9FSREWOgSUwyv7uNCLLurywRLLn2GWIHckV1L/exec";
+WhatsApp whatsapp;
 
 class MacAddress {
 public:
@@ -17,13 +19,13 @@ public:
         });
     }
 
-    static void printMacTable() {
-        Serial.println("--------------------");
-        Serial.println("MAC Address Table:");
+    static String printMacTable() {
+        String macTable = "*MAC Address identificados:*\n";
         for (const auto& mac : macAddresses) {
-            Serial.println(mac);
+            macTable += mac + "\n";
         }
-        Serial.println("--------------------");
+        macTable += "--------------------";
+        return macTable;
     }
 
 private:
@@ -40,8 +42,9 @@ private:
 
         if (!senderMac.isEmpty() && !macAddressExists(senderMac)) {
             macAddresses.push_back(senderMac);
-            printMacTable();
-            // sendToGoogleSheets(senderMac);
+            String macTable = printMacTable();
+            Serial.println(macTable);
+            delay(1000);
         } else {
             // print caso seja duplicado ou invalido
         }
@@ -62,35 +65,5 @@ private:
             }
         }
         return false;
-    }
-
-    static void sendToGoogleSheets(const String& macAddress) {
-        if(WiFi.status() == WL_CONNECTED) {
-            HTTPClient http;
-            http.begin(webhook_url);
-
-            http.addHeader("Content-Type", "application/json");
-
-            StaticJsonDocument<200> doc;
-            doc["macAddress"] = macAddress;
-
-            String requestBody;
-            serializeJson(doc, requestBody);
-
-            int httpResponseCode = http.POST(requestBody);
-
-            if (httpResponseCode > 0) {
-                String response = http.getString();
-                Serial.println(httpResponseCode);
-                Serial.println(response);
-            } else {
-                Serial.print("Error on sending POST: ");
-                Serial.println(httpResponseCode);
-            }
-
-            http.end();
-        } else {
-            Serial.println("Error in WiFi connection");
-        }
     }
 };
