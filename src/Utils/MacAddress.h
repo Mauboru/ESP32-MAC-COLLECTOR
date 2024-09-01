@@ -5,9 +5,12 @@
 #include "WiFi.h"
 #include <esp_wifi.h>
 #include "Utils/WhatsApp.h"
+#include "Utils/IdentifierMac.h"
 
 std::vector<String> macAddresses;
+std::vector<String> macManufacturers;
 WhatsApp whatsapp;
+IdentifierMac identifierMac;
 
 class MacAddress {
 public:
@@ -20,11 +23,11 @@ public:
     }
 
     static String printMacTable() {
-        String macTable = "*MAC Address identificados:*\n";
-        for (const auto& mac : macAddresses) {
-            macTable += mac + "\n";
+        String macTable = "*Endereços MAC identificados: " + String(macAddresses.size()) +  "*\n\n";
+        for (size_t i = 0; i < macAddresses.size(); ++i) {
+            macTable += macAddresses[i] + " - " + macManufacturers[i] + "\n";
         }
-        macTable += "--------------------";
+        macTable += "\n--------------------------------------";
         return macTable;
     }
 
@@ -42,11 +45,11 @@ private:
 
         if (!senderMac.isEmpty() && !macAddressExists(senderMac)) {
             macAddresses.push_back(senderMac);
+            String manufacturer = identifierMac.fetchManufacturer(senderMac);
+            macManufacturers.push_back(manufacturer);
             String macTable = printMacTable();
             Serial.println(macTable);
             delay(1000);
-        } else {
-            // print caso seja duplicado ou invalido
         }
     }
 

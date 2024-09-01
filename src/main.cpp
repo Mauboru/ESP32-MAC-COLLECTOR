@@ -15,6 +15,6 @@ void setup() {
 }
 
 void loop() {
-    delay(60000); // 1 minuto
+    delay(60000);
     whatsapp.sendWhatsAppMessage(macAddress.printMacTable());
 }
