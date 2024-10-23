@@ -5,12 +5,10 @@
 #include "WiFi.h"
 #include <esp_wifi.h>
 #include "Utils/WhatsApp.h"
-#include "Utils/IdentifierMac.h"
 
-std::vector<String> macAddresses;
-std::vector<String> macManufacturers;
+std::vector<String> macDetectados;
+std::vector<String> macEnviados;    
 WhatsApp whatsapp;
-IdentifierMac identifierMac;
 
 class MacAddress {
 public:
@@ -23,9 +21,9 @@ public:
     }
 
     static String printMacTable() {
-        String macTable = "*Endereços MAC identificados: " + String(macAddresses.size()) +  "*\n\n";
-        for (size_t i = 0; i < macAddresses.size(); ++i) {
-            macTable += macAddresses[i] + " - " + macManufacturers[i] + "\n";
+        String macTable = "*Endereços MAC identificados: " + String(macDetectados.size()) +  "*\n\n";
+        for (size_t i = 0; i < macDetectados.size(); ++i) {
+            macTable += macDetectados[i] + "\n";
         }
         macTable += "\n--------------------------------------";
         return macTable;
@@ -44,12 +42,10 @@ private:
         String senderMac = extractMacAddress(payload);
 
         if (!senderMac.isEmpty() && !macAddressExists(senderMac)) {
-            macAddresses.push_back(senderMac);
-            String manufacturer = identifierMac.fetchManufacturer(senderMac);
-            macManufacturers.push_back(manufacturer);
-            String macTable = printMacTable();
-            Serial.println(macTable);
-            delay(1000);
+            macDetectados.push_back(senderMac);
+            sendMacAddress(senderMac);
+        } else if (macAddressExists(senderMac)) {
+            removeMacAddress(senderMac);
         }
     }
 
@@ -61,8 +57,19 @@ private:
         return String(macStr);
     }
 
+    static void sendMacAddress(const String& macAddress) {
+        macEnviados.push_back(macAddress);
+    }
+
+    static void removeMacAddress(const String& macAddress) {
+        auto it = std::find(macEnviados.begin(), macEnviados.end(), macAddress);
+        if (it != macEnviados.end()) {
+            macEnviados.erase(it);
+        }
+    }
+
     static bool macAddressExists(const String& macAddress) {
-        for (const String& addr : macAddresses) {
+        for (const String& addr : macDetectados) {
             if (addr == macAddress) {
                 return true;
             }
