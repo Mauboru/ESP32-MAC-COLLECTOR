@@ -1,23 +1,29 @@
-#include <UrlEncode.h> 
-#include <HTTPClient.h>
+#include "macApiSender.h"
+#include <ArduinoJson.h>
 
-class MacApiSender {
-public:
-    void sendMacToApi(String message) {
-        String url = "";    
-        HTTPClient http;
-        http.begin(url);
-        
-        uint16_t httpResponseCode = http.GET();
+void MacApiSender::sendMacToApi(String macAddress) {
+    String URL = "http://85.31.63.241:8082/inserirMacCapturado";
 
-        if (httpResponseCode == 200){                                     
-            Serial.println("Dados enviados com sucesso!");  
-            delay(1000);
-        } else {
-            Serial.println("Erro ao tentar enviar os dados!");
-            Serial.print("Código HTTP: ");
-            Serial.println(httpResponseCode);
-        }
-        http.end();
+    HTTPClient http;
+    http.begin(URL);
+    http.addHeader("Content-Type", "application/json");
+
+    String jsonPayload;
+    StaticJsonDocument<200> doc;
+    doc["MAC"] = macAddress;
+    doc["id_esp_macAdress"] = 1;
+    serializeJson(doc, jsonPayload);
+
+    int httpResponseCode = http.POST(jsonPayload);
+
+    if (httpResponseCode == 201) {
+        String payload = http.getString();
+        Serial.println("Resposta da API:");
+        Serial.println(payload);
+    } else {
+        Serial.print("Erro ao tentar enviar os dados! Código: ");
+        Serial.println(httpResponseCode);
     }
-};
+
+    http.end();
+}

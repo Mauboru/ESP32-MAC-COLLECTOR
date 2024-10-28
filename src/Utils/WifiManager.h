@@ -1,3 +1,5 @@
+#pragma once
+
 #include <WiFiManager.h>
 #include <Arduino.h>
 
@@ -5,13 +7,10 @@ class WifiManager {
 public:
     void connect() {
         WiFiManager wm;
-        bool res;
-        res = wm.autoConnect("TecnoMaub", "password");
-
-        if (!res) {
+        if (!wm.autoConnect("TecnoMaub", "password")) {
             Serial.println("Failed to connect!!");
         } else {
-            Serial.println("Sucessful to connect!!");
+            Serial.println("Successful connection!!");
         }
     }
 };
