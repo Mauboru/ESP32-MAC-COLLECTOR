@@ -4,11 +4,8 @@
 #include <ArduinoJson.h>
 #include "WiFi.h"
 #include <esp_wifi.h>
-#include "Utils/WhatsApp.h"
 
-std::vector<String> macDetectados;
-std::vector<String> macEnviados;    
-WhatsApp whatsapp;
+std::vector<String> macAddresses;
 
 class MacAddress {
 public:
@@ -21,11 +18,11 @@ public:
     }
 
     static String printMacTable() {
-        String macTable = "*Endereços MAC identificados: " + String(macDetectados.size()) +  "*\n\n";
-        for (size_t i = 0; i < macDetectados.size(); ++i) {
-            macTable += macDetectados[i] + "\n";
+        String macTable = "*MAC Address identificados:*\n";
+        for (const auto& mac : macAddresses) {
+            macTable += mac + "\n";
         }
-        macTable += "\n--------------------------------------";
+        macTable += "--------------------";
         return macTable;
     }
 
@@ -42,10 +39,12 @@ private:
         String senderMac = extractMacAddress(payload);
 
         if (!senderMac.isEmpty() && !macAddressExists(senderMac)) {
-            macDetectados.push_back(senderMac);
-            sendMacAddress(senderMac);
-        } else if (macAddressExists(senderMac)) {
-            removeMacAddress(senderMac);
+            macAddresses.push_back(senderMac);
+            String macTable = printMacTable();
+            //Serial.println(macTable);
+            delay(1000);
+        } else {
+            // print caso seja duplicado ou invalido
         }
     }
 
@@ -57,19 +56,8 @@ private:
         return String(macStr);
     }
 
-    static void sendMacAddress(const String& macAddress) {
-        macEnviados.push_back(macAddress);
-    }
-
-    static void removeMacAddress(const String& macAddress) {
-        auto it = std::find(macEnviados.begin(), macEnviados.end(), macAddress);
-        if (it != macEnviados.end()) {
-            macEnviados.erase(it);
-        }
-    }
-
     static bool macAddressExists(const String& macAddress) {
-        for (const String& addr : macDetectados) {
+        for (const String& addr : macAddresses) {
             if (addr == macAddress) {
                 return true;
             }
