@@ -6,8 +6,10 @@
 #include <ArduinoJson.h>
 #include <WiFi.h>
 #include <esp_wifi.h>
+#include <time.h>
+#include <map>
 
-extern std::vector<String> macAddresses;
+extern std::map<String, unsigned long> macAddresses;
 
 class MacAddress {
 public:
