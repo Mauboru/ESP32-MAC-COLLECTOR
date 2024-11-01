@@ -25,14 +25,8 @@ String MacAddress::printMacTable() {
         return "Erro ao capturar o horário.";
     }
 
-    String meuMAC = "38:9A:F6:96:EB:C9";
-
     for (const auto& macEntry : macAddresses) {
-        String status = "";
-        if (macEntry.first == meuMAC) {
-            status = " < -- AQUI O CABEÇÃO";
-        }
-        macTable += " - " + macEntry.first + status + "\n";
+        macTable += " - " + macEntry.first + filtrarMacFixos(macEntry.first) + "\n";
         qtd++;
     }
 
@@ -65,4 +59,26 @@ String MacAddress::extractMacAddress(const uint8_t* macAddr) {
             macAddr[0], macAddr[1], macAddr[2],
             macAddr[3], macAddr[4], macAddr[5]);
     return String(macStr);
+}
+
+String MacAddress::filtrarMacFixos(String filter){
+    String macs[][2] = 
+    {
+        {"38:9A:F6:96:EB:C9", "Josué Henrique"},
+        {"5C:C9:D3:3A:6A:78", "COMPUTADOR COWORKING 1"},
+        {"5C:CD:5B:20:84:4C", "COMPUTADOR COWORKING 2"},
+        {"5C:CD:5B:EE:0E:B3", "COMPUTADOR COWORKING 3"},
+        {"5C:CD:5B:EE:0E:A3", "COMPUTADOR COWORKING 4"},
+        {"90:9A:4A:DE:42:21", "TP-LINK TECHNOLOGIES CO.,LTD."},
+        {"28:EE:52:5A:59:0F", "TP-LINK TECHNOLOGIES CO.,LTD."},
+    };
+                        
+
+    for(const auto& mac : macs){
+        if(mac[0] == filter){
+            return " <-- " + mac[1];
+        }
+    }
+
+    return "";
 }

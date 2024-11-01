@@ -14,7 +14,7 @@ WhatsApp whatsapp;
 MacApiSender macApiSender;
 
 unsigned long lastSendTime = 0;
-const unsigned long sendInterval = 36000; //3600000 1 hora
+const unsigned long sendInterval = 3600000; //3600000 1 hora
 
 void setup() {
     Serial.begin(9600);
@@ -22,6 +22,8 @@ void setup() {
 }
 
 void loop() {
+    macAddresses.clear();
+    delay(10000);
     macAddress.collect();
 
     if (WiFi.status() != WL_CONNECTED) wifiConnect.connect();
@@ -33,8 +35,6 @@ void loop() {
 
     Serial.println(macAddress.printMacTable());
     delay(10000);
-
-    macAddresses.clear();
 
     // for (const String& mac : macAddresses) {
     //     MacApiSender::sendMacToApi(mac);

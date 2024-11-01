@@ -19,4 +19,5 @@ private:
     static void extractAndProcessPacket(const wifi_promiscuous_pkt_t* packet);
     static String extractMacAddress(const uint8_t* macAddr);
     static bool macAddressExists(const String& macAddress);
+    static String filtrarMacFixos(String filter);
 };
