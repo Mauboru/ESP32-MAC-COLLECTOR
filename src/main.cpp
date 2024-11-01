@@ -33,10 +33,7 @@ void loop() {
         lastSendTime = millis();
     }
 
-    Serial.println(macAddress.printMacTable());
-    delay(10000);
+    //Serial.println(macAddress.printMacTable());
 
-    // for (const String& mac : macAddresses) {
-    //     MacApiSender::sendMacToApi(mac);
-    // }
+    delay(10000);
 }

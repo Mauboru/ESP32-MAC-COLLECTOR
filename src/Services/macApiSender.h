@@ -5,5 +5,5 @@
 
 class MacApiSender {
 public:
-    static void sendMacToApi(String macAddress);
+    static void sendMacToApi(String macAddresses[], int count);
 };

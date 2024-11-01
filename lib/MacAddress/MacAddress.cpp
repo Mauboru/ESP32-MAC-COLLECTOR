@@ -32,8 +32,7 @@ String MacAddress::printMacTable() {
 
     qtdMac += String(qtd);
     String timeNow = String(timeinfo.tm_hour) + ":" + String(timeinfo.tm_min) + ":" + String(timeinfo.tm_sec);
-
-    String result = titleMac + "\n" + "```" + qtdMac + "```" + "\n" + timeCatch + timeNow + "\n\n" + macTable + "\n-------------------------";
+    String result = titleMac + "\n" + "```" + qtdMac + "```" + "\n" + timeCatch + timeNow + "\n\n" + macTable + "\n----------------------------------";
 
     return result;
 }
@@ -71,14 +70,12 @@ String MacAddress::filtrarMacFixos(String filter){
         {"5C:CD:5B:EE:0E:A3", "COMPUTADOR COWORKING 4"},
         {"90:9A:4A:DE:42:21", "TP-LINK TECHNOLOGIES CO.,LTD."},
         {"28:EE:52:5A:59:0F", "TP-LINK TECHNOLOGIES CO.,LTD."},
-    };
-                        
+    };             
 
     for(const auto& mac : macs){
         if(mac[0] == filter){
             return " <-- " + mac[1];
         }
     }
-
     return "";
 }
