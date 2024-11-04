@@ -79,3 +79,23 @@ String MacAddress::filtrarMacFixos(String filter){
     }
     return "";
 }
+
+bool MacAddress::isMacFiltered(const String& mac) {
+    String macs[][2] = 
+    {
+        {"38:9A:F6:96:EB:C9", "Josué Henrique"},
+        {"5C:C9:D3:3A:6A:78", "COMPUTADOR COWORKING 1"},
+        {"5C:CD:5B:20:84:4C", "COMPUTADOR COWORKING 2"},
+        {"5C:CD:5B:EE:0E:B3", "COMPUTADOR COWORKING 3"},
+        {"5C:CD:5B:EE:0E:A3", "COMPUTADOR COWORKING 4"},
+        {"90:9A:4A:DE:42:21", "TP-LINK TECHNOLOGIES CO.,LTD."},
+        {"28:EE:52:5A:59:0F", "TP-LINK TECHNOLOGIES CO.,LTD."},
+    };             
+
+    for (const auto& macEntry : macs) {
+        if (macEntry[0] == mac) {
+            return true;
+        }
+    }
+    return false;
+}

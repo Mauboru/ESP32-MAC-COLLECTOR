@@ -15,6 +15,7 @@ class MacAddress {
 public:
     void collect();
     static String printMacTable();
+    static bool isMacFiltered(const String& mac);
 private:
     static void extractAndProcessPacket(const wifi_promiscuous_pkt_t* packet);
     static String extractMacAddress(const uint8_t* macAddr);
